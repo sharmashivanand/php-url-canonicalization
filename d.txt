@@ -1,0 +1,280 @@
+Array
+(
+    [scheme] => http
+    [host] => host
+    [path] => /%25%32%35
+)
+http://host/%25%32%35
+Array
+(
+    [scheme] => http
+    [host] => host
+    [path] => /%25%32%35%25%32%35
+)
+http://host/%25%32%35%25%32%35
+Array
+(
+    [scheme] => http
+    [host] => host
+    [path] => /%2525252525252525
+)
+http://host/%2525252525252525
+Array
+(
+    [scheme] => http
+    [host] => host
+    [path] => /asdf%25%32%35asd
+)
+http://host/asdf%25%32%35asd
+Array
+(
+    [scheme] => http
+    [host] => host
+    [path] => /%%%25%32%35asd%%
+)
+http://host/%%%25%32%35asd%%
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /
+)
+http://www.google.com/
+Array
+(
+    [scheme] => http
+    [host] => %31%36%38%2e%31%38%38%2e%39%39%2e%32%36
+    [path] => /%2E%73%65%63%75%72%65/%77%77%77%2E%65%62%61%79%2E%63%6F%6D/
+)
+http://%31%36%38%2e%31%38%38%2e%39%39%2e%32%36/%2E%73%65%63%75%72%65/%77%77%77%2E%65%62%61%79%2E%63%6F%6D
+Array
+(
+    [scheme] => http
+    [host] => 195.127.0.11
+    [path] => /uploads/%20%20%20%20/.verify/.eBaysecure=updateuserdataxplimnbqmn-xplmvalidateinfoswqpcmlx=hgplmcx/
+)
+http://195.127.0.11/uploads/%20%20%20%20/.verify/.eBaysecure=updateuserdataxplimnbqmn-xplmvalidateinfoswqpcmlx=hgplmcx
+Array
+(
+    [scheme] => http
+    [host] => host%23.com
+    [path] => /%257Ea%2521b%2540c%2523d%2524e%25f%255E00%252611%252A22%252833%252944_55%252B
+)
+http://host%23.com/%257Ea%2521b%2540c%2523d%2524e%25f%255E00%252611%252A22%252833%252944_55%252B
+Array
+(
+    [scheme] => http
+    [host] => 3279880203
+    [path] => /blah
+)
+http://3279880203/blah
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /blah/..
+)
+http://www.google.com/
+Array
+(
+    [path] => www.google.com/
+)
+/www.google.com
+Array
+(
+    [path] => www.google.com
+)
+/www.google.com
+Array
+(
+    [scheme] => http
+    [host] => www.evil.com
+    [path] => /blah
+    [fragment] => frag
+)
+http://www.evil.com/blah
+Array
+(
+    [scheme] => http
+    [host] => www.GOOgle.com
+    [path] => /
+)
+http://www.google.com/
+Array
+(
+    [scheme] => http
+    [host] => www.google.com...
+    [path] => /
+)
+http://www.google.com.../
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /foo_bar_baz_2
+)
+http://www.google.com/foo_bar_baz_2
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /q
+    [query] => 
+)
+http://www.google.com/q?
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /q
+    [query] => r?
+)
+http://www.google.com/q?r?
+Array
+(
+    [scheme] => http
+    [host] => www.google.com
+    [path] => /q
+    [query] => r?s
+)
+http://www.google.com/q?r?s
+Array
+(
+    [scheme] => http
+    [host] => evil.com
+    [path] => /foo
+    [fragment] => bar#baz
+)
+http://evil.com/foo
+Array
+(
+    [scheme] => http
+    [host] => evil.com
+    [path] => /foo;
+)
+http://evil.com/foo;
+Array
+(
+    [scheme] => http
+    [host] => evil.com
+    [path] => /foo
+    [query] => bar;
+)
+http://evil.com/foo?bar;
+Array
+(
+    [scheme] => http
+    [host] => _�.com
+    [path] => /
+)
+http://_�.com/
+Array
+(
+    [scheme] => http
+    [host] => notrailingslash.com
+)
+http://notrailingslash.com/
+Array
+(
+    [scheme] => http
+    [host] => www.gotaport.com
+    [port] => 1234
+    [path] => /
+)
+http://www.gotaport.com:1234/
+Array
+(
+    [path] =>   http://www.google.com/  
+)
+/  http:/www.google.com/  
+Array
+(
+    [scheme] => http
+    [host] =>  leadingspace.com
+    [path] => /
+)
+http:// leadingspace.com/
+Array
+(
+    [scheme] => http
+    [host] => %20leadingspace.com
+    [path] => /
+)
+http://%20leadingspace.com/
+Array
+(
+    [path] => %20leadingspace.com/
+)
+/%20leadingspace.com
+Array
+(
+    [scheme] => https
+    [host] => www.securesite.com
+    [path] => /
+)
+https://www.securesite.com/
+Array
+(
+    [scheme] => http
+    [host] => host.com
+    [path] => /ab%23cd
+)
+http://host.com/ab%23cd
+Array
+(
+    [scheme] => http
+    [host] => host.com
+    [path] => //twoslashes
+    [query] => more//slashes
+)
+http://host.com/twoslashes?more//slashes
+Array
+(
+    [path] => почта@престашоп.рф
+)
+/почта@престашоп.рф
+Array
+(
+    [path] => modulez.ru
+)
+/modulez.ru
+Array
+(
+    [path] => xn--80aj2abdcii9c.xn--p1ai
+)
+/xn--80aj2abdcii9c.xn--p1ai
+Array
+(
+    [path] => xn--80a1acn3a.xn--j1amh
+)
+/xn--80a1acn3a.xn--j1amh
+Array
+(
+    [path] => xn--srensen-90a.example.com
+)
+/xn--srensen-90a.example.com
+Array
+(
+    [path] => xn--mxahbxey0c.xn--xxaf0a
+)
+/xn--mxahbxey0c.xn--xxaf0a
+Array
+(
+    [path] => xn--fsqu00a.xn--4rr70v
+)
+/xn--fsqu00a.xn--4rr70v
+Array
+(
+    [path] => xn--престашоп.xn--рф
+)
+/xn--престашоп.xn--рф
+Array
+(
+    [path] => xn--prestashop.рф
+)
+/xn--prestashop.рф
+Array
+(
+    [path] => münchen.de
+)
+/münchen.de
