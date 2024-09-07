@@ -7,8 +7,8 @@ http://www.google.com/
 http://168.188.99.26/.secure/www.ebay.com/
 http://195.127.0.11/uploads/%20%20%20%20/.verify/.eBaysecure=updateuserdataxplimnbqmn-xplmvalidateinfoswqpcmlx=hgplmcx/
 http://host%23.com/~a!b@c%23d$e%25f^00&11*22(33)44_55+
-http://3279880203/blah
-http://www.google.com/blah/..
+http://195.127.0.11/blah
+http://www.google.com/
 http://www.google.com/
 http://www.google.com/
 http://www.evil.com/blah
@@ -21,9 +21,9 @@ http://www.google.com/q?r?s
 http://evil.com/foo
 http://evil.com/foo;
 http://evil.com/foo?bar;
-http://_%80.com/
+http://%01%80.com/
 http://notrailingslash.com/
-http://www.gotaport.com:1234/
+http://www.gotaport.com/
 http://www.google.com/
 http://%20leadingspace.com/
 http://%20leadingspace.com/

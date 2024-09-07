@@ -3,91 +3,178 @@
 define( 'DEBUG', 0 );
 
 class sfCanonicalUrl {
-    protected $url;
+	protected $url;
+	protected $parsedUrl;
 
-    public function __construct($url) {
-        $this->url = $this->canonicalize($url);
-    }
+	public function __construct( $url ) {
+		$this->url = $this->canonicalize( $url );
+	}
 
-    private function canonicalize($url) {
-        // Step 1: Pre-processing and cleaning
-        $url = trim($url);
-        $url = $this->addSchemeIfNeeded($url);
-        $url = $this->removeSpecialCharacters($url);
-        
-        // Parse URL and handle its components
-        $parsedUrl = parse_url($url);
-        $scheme = $parsedUrl['scheme'] ?? 'http';
-        $host = isset($parsedUrl['host']) ? $this->canonicalizeHostname($parsedUrl['host']) : '';
-        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
-        $path = isset($parsedUrl['path']) ? $this->canonicalizePath($parsedUrl['path']) : '/';
-        $query = isset($parsedUrl['query']) ? '?' . $parsedUrl['query'] : '';
+	private function canonicalize( $url ) {
+		// Step 1: Pre-processing and cleaning
+		$url = trim( $url );
+		$url = $this->addSchemeIfNeeded( $url );
+		$url = $this->removeSpecialCharacters( $url );
 
-        // Remove fragments
-        $url = "$scheme://$host$port$path$query";
-        $url = $this->repeatedlyUnescape($url);
-        $url = $this->escapeSpecialCharacters($url);
-        return $url;
-    }
+        $url = $this->pre_encode_url( $url );
 
-    private function addSchemeIfNeeded($url) {
-        if (!preg_match('~^[a-zA-Z]+://~', $url)) {
-            return "http://$url";
-        }
-        return $url;
-    }
+		// Parse URL and handle its components
+		$parsedUrl = parse_url( $url );
+		// echo 'Received Input: ' . print_r( $parsedUrl, 1 ) . PHP_EOL;
+		$scheme = $parsedUrl['scheme'] ?? 'http';
+		$host   = isset( $parsedUrl['host'] ) ? $this->canonicalizeHostname( $parsedUrl['host'] ) : '';
+		$port   = isset( $parsedUrl['port'] ) ? ':' . $parsedUrl['port'] : '';
+		$path   = isset( $parsedUrl['path'] ) ? $this->canonicalizePath( $parsedUrl['path'] ) : '/';
+		$query  = isset( $parsedUrl['query'] ) ? '?' . $parsedUrl['query'] : '';
 
-    private function removeSpecialCharacters($url) {
-        return str_replace(["\t", "\n", "\r"], '', $url);
-    }
+		// Remove fragments and port
+		$url = "$scheme://$host$path$query";
+		$url = $this->repeatedlyUnescape( $url );
+		$url = $this->escapeSpecialCharacters( $url );
+		return $url;
+	}
 
-    private function canonicalizeHostname($host) {
-        $host = strtolower($host);
-        $host = trim($host, '.');
-        $host = preg_replace('/\.{2,}/', '.', $host);
-        
-        // Normalize IP address
-        if ($ip = $this->normalizeIpAddress($host)) {
-            return $ip;
-        }
-        return $host;
-    }
+	function pre_encode_url( $url ) {
+		return preg_replace_callback(
+			'/[\x00-\x1F\x80-\xFF]/',
+			function ( $matches ) {
+				return sprintf( '%%%02X', ord( $matches[0] ) );
+			},
+			$url
+		);
+	}
 
-    private function normalizeIpAddress($host) {
-        if (filter_var($host, FILTER_VALIDATE_IP)) {
-            return $host;
-        }
-        $ipLong = ip2long($host);
-        if ($ipLong !== false) {
-            return long2ip($ipLong);
-        }
-        return $host;
-    }
+	private function addSchemeIfNeeded( $url ) {
+		if ( ! preg_match( '~^[a-zA-Z]+://~', $url ) ) {
+			return "http://$url";
+		}
+		return $url;
+	}
 
-    private function canonicalizePath($path) {
-        $path = preg_replace('#/\.?/#', '/', $path);
-        $path = preg_replace('#(?<=/)(?!\.\./)[^/]+/\.\./#', '', $path);
-        return preg_replace('#/+#', '/', $path);
-    }
+	private function removeSpecialCharacters( $url ) {
+		return str_replace( array( "\t", "\n", "\r" ), '', $url );
+	}
 
-    private function repeatedlyUnescape($url) {
-        $previous = null;
-        while ($previous !== $url) {
-            $previous = $url;
-            $url = rawurldecode($url);
-        }
-        return $url;
-    }
+	private function canonicalizeHostname( $host ) {
+		$host = strtolower( $host );
+		$host = trim( $host, '.' );
+		// echo 'HOST low-trimmed:' . $host . ':' . PHP_EOL;
+		// echo 'HOST: ' .  urlencode( rawurldecode($host) )  . PHP_EOL;
+		$host = preg_replace( '/\.{2,}/', '.', $host );
+		// echo 'HOST no dots:' . $host . ':' . PHP_EOL;
 
-    private function escapeSpecialCharacters($url) {
-        return preg_replace_callback('/[\x00-\x20\x7F-\xFF#%]/', function ($matches) {
-            return sprintf("%%%02X", ord($matches[0]));
-        }, $url);
-    }
+		// Percent-encode non-printable and non-ASCII characters
+		$host = preg_replace_callback(
+			// '/[\x00-\x1F\x7F-\xFF]/',
+			'/[\x00-\x1F\x80-\xFF]/',
+			function ( $matches ) {
+				// echo 'MATCHES: ' . print_r( $matches, 1 ) . PHP_EOL;
+				// echo 'MATCHE: ' . $matches[0] . 'ord( $matches[0] ): ' . ord( $matches[0] ) . PHP_EOL;
+				return sprintf( '%%%02X', ord( $matches[0] ) );
+			},
+			$host
+		);
 
-    public function getUrl() {
-        return $this->url;
-    }
+		// echo 'HOST: ' . $host . PHP_EOL;
+
+		// Normalize IP address
+		if ( $ip = $this->normalizeIpAddress( $host ) ) {
+			return $ip;
+		}
+		return $host;
+	}
+
+	private function normalizeIpAddress( $host ) {
+		// Remove leading zeros in IP address to prevent interpretation as octal
+		$host = preg_replace( '/\b0+(?=\d)/', '', $host );
+
+		// Check if the host is a valid IP address
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return $host; // It's already a valid IP in decimal notation
+		}
+
+		// Attempt to detect hexadecimal or lesser known formats
+		if ( preg_match( '/^0x[a-f0-9]+$/i', $host ) ) {
+			$decimal = hexdec( $host ); // Convert from hexadecimal
+			return long2ip( $decimal );
+		} elseif ( preg_match( '/^[0-7]+$/', $host ) ) {
+			$decimal = octdec( $host ); // Convert from octal
+			return long2ip( $decimal );
+		} elseif ( preg_match( '/^\d+$/', $host ) ) {
+			return long2ip( $host ); // Direct conversion assumes decimal input
+		}
+
+		// Check for dotted octal/hex formats which are not covered by filter_var
+		if ( preg_match( '/^[0-9a-fx.]+$/i', $host ) ) {
+			$parts = explode( '.', $host );
+			$ip    = array_map(
+				function ( $part ) {
+					if ( strpos( $part, 'x' ) !== false ) {
+						return hexdec( $part );
+					} elseif ( preg_match( '/^0\d+$/', $part ) ) {
+						return octdec( $part );
+					}
+					return $part;
+				},
+				$parts
+			);
+			if ( count( $ip ) === 4 ) {
+				return implode( '.', $ip );
+			}
+		}
+
+		return false; // Not a recognizable IP format
+	}
+
+	private function canonicalizePath( $path ) {
+		$segments         = explode( '/', $path );
+		$resolvedSegments = array();
+
+		foreach ( $segments as $segment ) {
+			if ( $segment === '..' ) {
+				// Pop the last valid segment off only if there's something to pop
+				if ( count( $resolvedSegments ) > 0 ) {
+					array_pop( $resolvedSegments );
+				}
+			} elseif ( $segment !== '.' && $segment !== '' ) {
+				// Add the segment if it's not a current directory (.) or empty (leading/trailing slashes)
+				$resolvedSegments[] = $segment;
+			}
+		}
+
+		// Rebuild the path from the resolved segments
+		$resolvedPath = '/' . implode( '/', $resolvedSegments );
+
+		// Ensure the path ends with a slash if it's a directory
+		if ( substr( $path, -1 ) === '/' && substr( $resolvedPath, -1 ) !== '/' ) {
+			$resolvedPath .= '/';
+		}
+
+		return $resolvedPath;
+	}
+
+	private function repeatedlyUnescape( $url ) {
+		$previous = null;
+		while ( $previous !== $url ) {
+			$previous = $url;
+			$url      = rawurldecode( $url );
+		}
+		return $url;
+	}
+
+	private function escapeSpecialCharacters( $url ) {
+		return preg_replace_callback(
+			'/[\x00-\x20\x7F-\xFF#%]/',
+			function ( $matches ) {
+				return sprintf( '%%%02X', ord( $matches[0] ) );
+			},
+			$url
+		);
+	}
+
+	public function getUrl() {
+		return $this->url;
+	}
 }
 
 
